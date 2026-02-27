@@ -1,29 +1,18 @@
-def detect_patterns(lab_values, benchmarks):
-    pattern_hits = {}
-    pattern_results = []
+def detect_patterns(test_results, benchmarks):
+    """
+    test_results: list of test result objects
+    benchmarks: medical ranges
+    """
 
-    # Group abnormal tests by pattern
-    for test, value in lab_values.items():
-        if test not in benchmarks:
-            continue
+    patterns = []
 
-        benchmark = benchmarks[test]
-        normal_min, normal_max = benchmark["range"]
-        pattern = benchmark["pattern_group"]
+    for test in test_results:
+        name = test["test"]
+        status = test["status"]
 
-        is_abnormal = value < normal_min or value > normal_max
+        if status == "low":
+            patterns.append(f"{name} is lower than the typical range.")
+        elif status == "high":
+            patterns.append(f"{name} is higher than the typical range.")
 
-        if is_abnormal:
-            pattern_hits.setdefault(pattern, []).append(test)
-
-    # Decide patterns
-    for pattern, tests in pattern_hits.items():
-        if len(tests) >= 2:
-            confidence = min(50 + len(tests) * 15, 90)
-            pattern_results.append({
-                "pattern": f"Possible {pattern}",
-                "tests_involved": tests,
-                "confidence_percent": confidence
-            })
-
-    return pattern_results
+    return patterns

@@ -1,51 +1,107 @@
-def calculate_risk_score(lab_values, benchmarks):
-    total_score = 0
-    detailed_scores = {}
+import json
+import os
 
-    for test, value in lab_values.items():
-        if test not in benchmarks:
+# -------------------------------------------------
+# LOAD BENCHMARK RANGES
+# -------------------------------------------------
+
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+BENCHMARK_FILE = os.path.join(
+    BASE_DIR, "benchmarks", "medical_ranges.json"
+)
+
+with open(BENCHMARK_FILE, "r") as f:
+    MEDICAL_RANGES = json.load(f)
+
+
+# -------------------------------------------------
+# CONFIDENCE CALCULATION (NOT DIAGNOSTIC)
+# -------------------------------------------------
+
+def calculate_confidence(value, min_val, max_val):
+    """
+    Measures how clear the interpretation is,
+    NOT medical certainty.
+    """
+    if value is None or min_val is None or max_val is None:
+        return 0.3
+
+    span = max_val - min_val
+    if span <= 0:
+        return 0.4
+
+    if min_val <= value <= max_val:
+        return 0.9
+
+    distance = min(abs(value - min_val), abs(value - max_val))
+    ratio = distance / span
+
+    if ratio < 0.1:
+        return 0.75
+    elif ratio < 0.25:
+        return 0.6
+    else:
+        return 0.45
+
+
+# -------------------------------------------------
+# MAIN ANALYSIS FUNCTION
+# -------------------------------------------------
+
+def analyze_tests(lab_values: dict):
+    """
+    Takes extracted lab values from parser
+
+    Returns:
+        test_results: list of structured test objects
+        overall risk_score: int (0–100)
+    """
+
+    test_results = []
+    total_risk_weight = 0
+
+    for test_name, value in lab_values.items():
+
+        # Skip tests without benchmarks
+        range_info = MEDICAL_RANGES.get(test_name)
+        if not isinstance(range_info, dict):
             continue
 
-        benchmark = benchmarks[test]
-        normal_min, normal_max = benchmark["range"]
-        weight = benchmark["severity_weight"]
+        min_val = range_info.get("min")
+        max_val = range_info.get("max")
 
-        # Default: no risk
-        contribution = 0
-        deviation_pct = 0
+        # Defensive handling for malformed benchmarks
+        if min_val is None or max_val is None:
+            status = "Unknown"
+            risk_weight = 0
+            confidence = 0.3
+        else:
+            if value < min_val:
+                status = "Low"
+                risk_weight = 2
+            elif value > max_val:
+                status = "High"
+                risk_weight = 2
+            else:
+                status = "Normal"
+                risk_weight = 0
 
-        if value < normal_min:
-            deviation_pct = (normal_min - value) / normal_min
-        elif value > normal_max:
-            deviation_pct = (value - normal_max) / normal_max
+            confidence = calculate_confidence(value, min_val, max_val)
 
-        # Scoring logic (simple & explainable)
-        if deviation_pct > 0:
-            if deviation_pct > 0.3:
-                contribution = weight * 2
-            elif deviation_pct > 0.2:
-                contribution = weight * 1.5
-            elif deviation_pct > 0.1:
-                contribution = weight
+        test_results.append({
+    "test": test_name,                          # ✅ frontend expects this
+    "value": value,
+    "status": status.capitalize(),              # Normal / Low / High
+    "normalRange": f"{min_val} – {max_val}",    # ✅ frontend expects string
+    "confidence": confidence
+})
 
-        total_score += contribution
+        total_risk_weight += risk_weight
 
-        detailed_scores[test] = {
-            "value": value,
-            "normal_range": benchmark["range"],
-            "deviation_percent": round(deviation_pct * 100, 1),
-            "score_contribution": round(contribution, 1)
-        }
+    # -------------------------------------------------
+    # Normalize risk score to 0–100
+    # -------------------------------------------------
+    max_possible = len(test_results) * 2 if test_results else 1
+    risk_score = int((total_risk_weight / max_possible) * 100)
 
-    # Cap score at 100
-    total_score = min(round(total_score, 1), 100)
-
-    # Risk label
-    if total_score < 20:
-        risk_level = "Low"
-    elif total_score < 50:
-        risk_level = "Moderate"
-    else:
-        risk_level = "High"
-
-    return total_score, risk_level, detailed_scores
+    return test_results, risk_score
