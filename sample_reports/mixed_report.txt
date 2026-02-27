@@ -1,0 +1,5 @@
+Hemoglobin 10.4
+RBC 4.0
+MCV 76
+Fasting Glucose 115
+LDL Cholesterol 138

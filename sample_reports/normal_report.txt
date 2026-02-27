@@ -1,0 +1,9 @@
+Patient Name: akanksha pravasthi
+Age: 21
+Gender: female
+
+Hemoglobin 13.8
+RBC 4.9
+MCV 90
+Fasting Glucose 92
+LDL Cholesterol 95

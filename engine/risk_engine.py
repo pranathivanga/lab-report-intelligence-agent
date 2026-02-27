@@ -63,14 +63,19 @@ def analyze_tests(lab_values: dict):
     for test_name, value in lab_values.items():
 
         # Skip tests without benchmarks
-        range_info = MEDICAL_RANGES.get(test_name)
-        if not isinstance(range_info, dict):
+        if test_name not in MEDICAL_RANGES:
             continue
 
-        min_val = range_info.get("min")
-        max_val = range_info.get("max")
+        range_info = MEDICAL_RANGES[test_name]
 
-        # Defensive handling for malformed benchmarks
+        # --- Extract range safely ---
+        range_vals = range_info.get("range", [])
+        if len(range_vals) == 2:
+            min_val, max_val = range_vals
+        else:
+            min_val, max_val = None, None
+
+        # --- Determine status ---
         if min_val is None or max_val is None:
             status = "Unknown"
             risk_weight = 0
@@ -78,30 +83,31 @@ def analyze_tests(lab_values: dict):
         else:
             if value < min_val:
                 status = "Low"
-                risk_weight = 2
+                risk_weight = 1          # ✅ changed
             elif value > max_val:
                 status = "High"
-                risk_weight = 2
+                risk_weight = 1          # ✅ changed
             else:
                 status = "Normal"
                 risk_weight = 0
 
             confidence = calculate_confidence(value, min_val, max_val)
 
+        # --- Append result ---
         test_results.append({
-    "test": test_name,                          # ✅ frontend expects this
-    "value": value,
-    "status": status.capitalize(),              # Normal / Low / High
-    "normalRange": f"{min_val} – {max_val}",    # ✅ frontend expects string
-    "confidence": confidence
-})
+            "test": test_name,
+            "value": value,
+            "status": status,
+            "normalRange": f"{min_val} – {max_val}" if min_val is not None else "Unknown",
+            "confidence": confidence
+        })
 
         total_risk_weight += risk_weight
 
     # -------------------------------------------------
     # Normalize risk score to 0–100
     # -------------------------------------------------
-    max_possible = len(test_results) * 2 if test_results else 1
+    max_possible = len(test_results) if test_results else 1
     risk_score = int((total_risk_weight / max_possible) * 100)
 
     return test_results, risk_score
