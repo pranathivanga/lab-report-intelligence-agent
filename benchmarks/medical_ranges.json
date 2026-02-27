@@ -1,0 +1,32 @@
+{
+  "Hemoglobin": {
+    "unit": "g/dL",
+    "range": [13.8, 17.2],
+    "severity_weight": 8,
+    "pattern_group": "Anemia"
+  },
+  "RBC": {
+    "unit": "million/uL",
+    "range": [4.7, 6.1],
+    "severity_weight": 6,
+    "pattern_group": "Anemia"
+  },
+  "MCV": {
+    "unit": "fL",
+    "range": [80, 100],
+    "severity_weight": 5,
+    "pattern_group": "Anemia"
+  },
+  "Fasting Glucose": {
+    "unit": "mg/dL",
+    "range": [70, 99],
+    "severity_weight": 9,
+    "pattern_group": "Diabetes"
+  },
+  "LDL Cholesterol": {
+    "unit": "mg/dL",
+    "range": [0, 100],
+    "severity_weight": 7,
+    "pattern_group": "Cholesterol"
+  }
+}

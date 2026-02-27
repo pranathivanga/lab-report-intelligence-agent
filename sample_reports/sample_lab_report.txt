@@ -1,0 +1,10 @@
+Patient Name: akanksha pravasthi
+Age: 21
+Gender: lesbian
+
+Test Name            Result     Unit
+Hemoglobin           9.8        g/dL
+RBC                  4.1        million/uL
+MCV                  72         fL
+Fasting Glucose      118        mg/dL
+LDL Cholesterol      142        mg/dL
