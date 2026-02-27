@@ -1,12 +1,10 @@
 import os
-import google.generativeai as genai
 from dotenv import load_dotenv
+from google import genai
 
 load_dotenv()
 
-genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
-
-model = genai.GenerativeModel("gemini-pro")
+client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
 
 def generate_explanation(lab_values, risk_score, risk_level, patterns):
     """
@@ -16,24 +14,28 @@ def generate_explanation(lab_values, risk_score, risk_level, patterns):
     prompt = f"""
 You are a medical report explanation assistant.
 
-IMPORTANT RULES:
+STRICT RULES:
 - DO NOT diagnose diseases.
-- DO NOT name medical conditions as final conclusions.
+- DO NOT claim the user has any medical condition.
 - DO NOT prescribe treatment or medication.
-- ONLY explain lab values, deviations, and general implications.
-- Encourage consulting a medical professional when needed.
+- DO NOT provide medical decisions.
+- ONLY explain lab values and deviations.
 - Use calm, reassuring language.
+- Encourage consulting a qualified doctor.
 
-INPUT DATA:
+DATA:
 Lab Values: {lab_values}
 Overall Risk Score: {risk_score}/100 ({risk_level})
-Detected Patterns: {patterns}
+Detected Patterns (non-diagnostic): {patterns}
 
 TASK:
-Explain the lab report in simple language for a patient.
-Focus on understanding, not diagnosis.
-End with a general recommendation about consulting a doctor.
+Explain this lab report in simple language for a patient.
+End with a gentle recommendation to consult a doctor.
 """
 
-    response = model.generate_content(prompt)
+    response = client.models.generate_content(
+        model="gemini-2.5-flash",
+        contents=prompt
+    )
+
     return response.text
