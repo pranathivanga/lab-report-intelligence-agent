@@ -2,13 +2,12 @@ import pdfplumber
 import re
 
 # -------- PDF TEXT EXTRACTION --------
-def extract_text_from_pdf(uploaded_file):
+
+def extract_text_from_pdf(file_path):
     text = ""
-    with pdfplumber.open(uploaded_file) as pdf:
+    with pdfplumber.open(file_path) as pdf:
         for page in pdf.pages:
-            extracted = page.extract_text()
-            if extracted:
-                text += extracted + "\n"
+            text += page.extract_text() + "\n"
     return text
 
 
