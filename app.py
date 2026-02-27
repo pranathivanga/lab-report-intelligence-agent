@@ -67,11 +67,9 @@ if uploaded_file:
         lab_values, total_score, risk_level, patterns
     )
 
-    # ================= UI BLOCK 2 START =================
-
+    # ================= UI BLOCK 2 (Risk Summary) =================
     st.subheader("📊 Overall Health Risk")
 
-    # Color logic
     if risk_level == "Low":
         risk_color = "🟢"
         msg = "Your overall risk appears to be low."
@@ -86,6 +84,33 @@ if uploaded_file:
     st.progress(int(total_score))
     st.write(f"**Risk Score:** {total_score} / 100")
     st.write(msg)
+
+    st.markdown("---")
+
+    # ================= UI BLOCK 3 (Lab Results Table) =================
+    st.subheader("📋 Your Lab Results")
+
+    table_rows = []
+
+    for test, value in lab_values.items():
+        normal_min, normal_max = benchmarks[test]["range"]
+
+        if value < normal_min:
+            status = "Low"
+        elif value > normal_max:
+            status = "High"
+        else:
+            status = "Normal"
+
+        table_rows.append({
+            "Test": test,
+            "Your Value": value,
+            "Normal Range": f"{normal_min} – {normal_max}",
+            "Status": status
+        })
+
+    df = pd.DataFrame(table_rows)
+    st.table(df)
 
     st.markdown("---")
 
