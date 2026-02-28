@@ -44,11 +44,19 @@ Parsing: PDFPlumber, Regex
 AI Integration: Gemini API
 
 ▶️ How to Run Locally
+
+
 Backend
+
+
 cd backend
 venv\Scripts\activate
 uvicorn api:app --port 8001
+
+
 Frontend
+
+
 cd frontend
 npm install
 npm run dev
