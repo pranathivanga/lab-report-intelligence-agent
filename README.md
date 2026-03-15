@@ -1,69 +1,138 @@
-🧠 LAB REPORT INTELLIGENCE AGENT
+🧠 Lab Report Intelligence Agent
 
+An AI-powered system that converts complex medical lab reports into structured, easy-to-understand health insights.
 
-🚨 PROBLEM STATEMENT
+Instead of overwhelming users with raw numbers and medical terminology, the system analyzes lab values and generates plain-language explanations and summaries, while maintaining a strictly non-diagnostic approach.
 
-Lab reports contain complex medical terminology and numerical values that are difficult for non-medical users to understand. This often causes confusion, anxiety, and misinterpretation of personal health data.
+🚨 Problem
 
-💡 OUR SOLUTION
+Medical lab reports contain complex terminology, abbreviations, and numerical ranges that are difficult for non-medical users to interpret.
 
-Lab Report Intelligence Agent converts raw lab reports into structured, plain-language insights that help users understand their health data clearly — without providing medical diagnosis.
+This often leads to:
 
-✨ UNIQUE INNOVATION
+confusion about health status
 
-We don’t just display lab values.
-We structure understanding by:
+unnecessary anxiety
 
-Providing a high-level summary first
+misinterpretation of results
 
-Categorizing results as normal, low, or high
+Most patients simply want to understand:
 
-Explaining values in simple language
+“Is this normal? Should I be concerned?”
 
-Maintaining a strictly non-diagnostic, patient-safe design
+💡 Solution
 
-Our focus is health literacy, not diagnosis.
+Lab Report Intelligence Agent processes uploaded lab reports and converts them into structured, human-readable insights.
 
-🔑 KEY FEATURES
+The system:
 
-Upload lab reports (PDF / TXT)
+extracts lab values from reports
 
-Automatic lab value extraction
+compares them against standard reference ranges
 
-Overall health risk summary
+highlights abnormal results
 
-“At a Glance” report overview
+generates AI-powered explanations in plain English
 
-Plain-language explanation
+The goal is to improve health literacy, not provide medical diagnoses.
 
-🛠 TECH STACK
+✨ Key Features
 
-Frontend: Next.js, React, Tailwind CSS
-Backend: FastAPI (Python)
-Parsing: PDFPlumber, Regex
-AI Integration: Gemini API
+📄 Upload lab reports (PDF / TXT)
 
-▶️ How to Run Locally
+🔍 Automatic lab value extraction
 
+📊 Overall risk score visualization
+
+⚡ “At a Glance” summary of results
+
+🤖 AI-generated explanations in simple language
+
+📈 Interpretation confidence indicators
+
+💬 Suggested questions to ask your doctor
+
+🏗 System Architecture
+```
+User
+  ↓
+Next.js Frontend (Vercel)
+  ↓
+FastAPI Backend (Render)
+  ↓
+Gemini AI API
+  ↓
+Structured Health Insights
+```
+🛠 Tech Stack
+Frontend
+
+Next.js
+
+React
+
+Tailwind CSS
 
 Backend
 
+FastAPI
 
-cd backend
-venv\Scripts\activate
-uvicorn api:app --port 8001
+Python
 
+Data Processing
+
+PDFPlumber
+
+Regex-based parsing
+
+AI Integration
+
+Google Gemini API
+
+Deployment
+
+Vercel (Frontend)
+
+Render (Backend)
+
+🌐 Live Demo
 
 Frontend
+https://lab-report-intelligence-agent-e11q.vercel.app
 
+Backend API
+https://lab-report-intelligence-agent-1.onrender.com/docs
 
+▶️ Running Locally
+1️⃣ Start Backend
+python -m venv venv
+venv\Scripts\activate
+pip install -r requirements.txt
+uvicorn api:app --reload
+
+Backend runs at:
+
+http://127.0.0.1:8000
+2️⃣ Start Frontend
 cd frontend
 npm install
 npm run dev
 
 Open in browser:
+
 http://localhost:3000
+⚠ Disclaimer
 
-⚠ DISCLAIMER
+This application is intended for informational purposes only and does not constitute medical advice, diagnosis, or treatment.
 
-This application is for informational purposes only and does not replace professional medical advice.
+Always consult a qualified healthcare professional regarding medical concerns.
+
+📌 Future Improvements
+
+Support for additional lab report formats
+
+Improved medical entity recognition
+
+Multi-report comparison
+
+Personalized health trend tracking
