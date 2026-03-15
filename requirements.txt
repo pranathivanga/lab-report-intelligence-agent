@@ -1,4 +1,6 @@
 fastapi
 uvicorn
-pdfplumber
 python-multipart
+pdfplumber
+pdfminer.six
+python-dotenv
